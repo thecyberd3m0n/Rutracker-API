@@ -1,34 +1,34 @@
-# Rutracker API для Node.js
-Данный модуль позволяет искать по раздачам трекера Rutracker.org. Поскольку поиск запрещён для незарегистрированных пользователей, также поддерживаетcя и авторизация.
+# Rutracker API for Node.js
+Module for communicating with rutracker service. You can search for torrents but authentication is required and supported
 
-## Установка
-Установите пакет в нужную директорию с помощью ```npm install rutracker-api``` (предполагается, что Node.js и пакетный менеждер npm у вас уже установлены). После установки модуля и загрузки его зависимостей, Rutracker API готов к использованию.
+## Installation
+Run```npm install rutracker-api --save```. Module will be installed to your project.
 
-## Использование
-В первую очередь необходимо скопировать папку с Rutracker API в ваш проект. Далее, подключите модуль в нужном вам JS-файле:
+## Usage
+Import RutrackerApi dependency into your Node.js project
 
 ```js
 var RutrackerApi = require('rutracker-api');
 ```
 
-Следующий этап — авторизация приложения. Сделать это можно непосредственно при вызове конструктора, либо позже — с помощью метода объекта ```login```.
+Provide possibility to authenticate. You can do it via constructor, or later — using ```login``` method.
 
 ```js
 var username = 'username',
     password = 'password';
 
-// Вариант №1: при вызове конструктора
+// Option 1: using constructor
 var rutracker = new RutrackerApi({
     username: username,
     password: password
 });
 
-// Вариант №2: с помощью метода 'login'
+// Option 2: 'login' method
 var rutracker = new RutrackerApi();
 rutracker.login(username, password);
 ```
 
-Помните, что для синхронизации вы можете использовать событие ```login```. После того, как приложение получило токен, мы можем начать искать раздачи. Поиск осуществляется через метод ```search```:
+Remember, For synchronization you can use ```login``` event. When token will be acquired, you can do your search. Use ```search``` method for that:
 
 ```js
 var query = "YOUR QUERY HERE",
@@ -37,7 +37,7 @@ var query = "YOUR QUERY HERE",
 rutracker.search(query, callback);
 ```
 
-В callback будет передан объект вида:
+And read response from callback:
 ```js
 [
   {
@@ -54,24 +54,28 @@ rutracker.search(query, callback);
 ]
 ```
 
-Парсинг осуществляется с помощью метода ```parseSearch```. При желании можно сделать так, чтобы в callback передавалась сырая HTML-страница. Для этого свойству ```rutracker.parseData``` нужно присвоить значение ```false```.
+Parsing HTML can be used by ```parseSearch``` method. You can disable parsing, and acquire raw HTML page. You can do it by setting ```rutracker.parseData``` field to ```false```.
 
-Также доступен метод ``download`` для получения торрент файла. Метод вернет FileReadableStream для дальнейшей работы с файлом.
+Of course you can use  ``download`` method for acquiring torrent file. The response has type of FileReadableStream for further work with file.
 
 ```js
-// 12345 является идентификатором торрента (поле id)
+// 12345 is torrent ID
 rutracker.download('12345', function(response)
 {
     // response является fs.ReadStream
 });
 ```
 
-## События
+## Events
 ### login
-Срабатывает при успешной авторизации приложения.
+Successfull authorization in Rutracker.
 
 ### login-error
-Срабатывает, если указанные логин и пароль не подошли.
+Bad username or password.
 
 ### error
-Стандартное событие. Наиболее вероятные причины возникновения — истечение времени ожидания ответа от сервера или отсутствие доступа к серверам RuTracker.
+Cannot connect to RuTracker
+
+### TODO
+- Registration in rutracker
+- Filters for search results
